@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "917001d9-0062-4742-bf6a-97d6eba50a1f",
+		"name": "newsarticle-archive-scrapper",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Search authors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/search/authors?q=Reporter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"search",
+						"authors"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Reporter"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Articles by Authors",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/search/authors/articles?q=Reporter",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"search",
+						"authors",
+						"articles"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Reporter"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Articles By Title and Description",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/search/articles?q=consumers",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"search",
+						"articles"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "consumers"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

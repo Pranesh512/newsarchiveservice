@@ -5,28 +5,27 @@ services:
     container_name: elasticsearch
     environment:
     - cluster.name=news-archives-cluster
-    - bootstrap.memory_lock=true
-    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    - "discovery.zen.ping.unicast.hosts=elasticsearch"
+    - node.name=news-archives-node
+    - http.host=0.0.0.0
+    - transport.host=0.0.0.0
+    - transport.tcp.port=9300
+    - transport.publish_port=9300
     ulimits:
       memlock:
         soft: -1
         hard: -1
     ports:
-      - 9200:9200
-      - 9300:9300
-    networks:
-      - elk
+    - 9200:9200
+    - 9300:9300
   news-archive-scrapper:
     build: newsarchivescrapper
     environment:
-      - spring.data.elasticsearch.cluster-nodes=elasticsearch:9300
+    - spring.data.elasticsearch.cluster-nodes=elasticsearch:9300
     links:
-      - elasticsearch
+    - elasticsearch
+    depends_on:
+    - elasticsearch
     volumes:
-      - /news-archive-scrapper:/news-archive-scrapper
-    networks:
-      - elk
-networks:
-  elk:
-    driver: bridge
+    - /news-archive-scrapper:/news-archive-scrapper
+    ports:
+    - 8080:8080

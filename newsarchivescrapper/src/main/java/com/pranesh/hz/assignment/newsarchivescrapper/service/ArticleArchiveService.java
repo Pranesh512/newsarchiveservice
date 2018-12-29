@@ -1,59 +1,69 @@
 package com.pranesh.hz.assignment.newsarchivescrapper.service;
 
-import com.pranesh.hz.assignment.newsarchivescrapper.entity.Article;
-import com.pranesh.hz.assignment.newsarchivescrapper.entity.Author;
+import com.pranesh.hz.assignment.newsarchivescrapper.entity.ArticlesArchiveDoc;
 import com.pranesh.hz.assignment.newsarchivescrapper.model.ScrappedArticle;
-import com.pranesh.hz.assignment.newsarchivescrapper.repository.ArticleRepository;
-import com.pranesh.hz.assignment.newsarchivescrapper.repository.AuthorRepository;
+import com.pranesh.hz.assignment.newsarchivescrapper.repository.ArticlesArchiveESRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-
 @Service
 public class ArticleArchiveService {
 
-    @Autowired
-    private AuthorRepository authorRepository;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ArticleArchiveService.class);
 
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticlesArchiveESRepository esRepository;
 
     @Autowired
     private List<INewsArchiveScrapperService> scrapperServices;
 
     public void runScrapping() {
+        long count = esRepository.count();
+        if (count > 0) {
+            LOGGER.info("Scrapping already done");
+            LOGGER.debug("Scrapped doc count=[" + count + "]");
+            return;
+        }
         scrapperServices.forEach(scrapper -> {
-            List<ScrappedArticle> scrappedArticles = scrapper.doScrap();
-            scrappedArticles.forEach(sa -> {
-                Author author;
-                Page<Author> authors = authorRepository.findByName(sa.getAuthorName(), PageRequest.of(0, 1));
-                if (!authors.isEmpty()) {
-                    author = authors.getContent().get(0);
-                } else {
-                    author = new Author(sa.getAuthorName());
-                    authorRepository.save(author);
+            scrapper.doScrap(sa -> {
+                // Hash is modified cause as negative integer hash value is taken as "not" in elastic query
+                String authorNameHash = "an" + String.valueOf(sa.getAuthorName().hashCode());
+                ArticlesArchiveDoc author = esRepository.findByAuthorNameHash(authorNameHash);
+                if (author == null) {
+                    author = new ArticlesArchiveDoc(sa.getAuthorName(), authorNameHash);
+                    esRepository.save(author);
                 }
-                Article article = new Article(sa.getTitle(), sa.getDescription(), author.getId(), sa.getPublishDate());
-                articleRepository.save(article);
+                ArticlesArchiveDoc article = new ArticlesArchiveDoc(sa.getAuthorName(), sa.getTitle(),
+                        sa.getDescription(), sa.getPublishDate());
+                esRepository.save(article);
             });
         });
     }
 
     public List<String> searchAuthors(String authorNameQuery) {
-        SearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(matchQuery("name", authorNameQuery).minimumShouldMatch("75%"))
-                .build();
-        Page<Author> authors = authorRepository.search(searchQuery);
-        return authors.get().map(Author::getName).collect(Collectors.toList());
+        List<ArticlesArchiveDoc> authors = esRepository.searchAuthors(authorNameQuery);
+        return authors.stream().map(ArticlesArchiveDoc::getAuthorName).collect(Collectors.toList());
     }
 
+    public List<ScrappedArticle> searchArticlesByAuthor(String authorNameQuery) {
+        List<ArticlesArchiveDoc> articles = esRepository.searchArticlesByAuthor(authorNameQuery);
+        return transformToModel(articles);
+    }
 
+    public List<ScrappedArticle> searchArticlesByTitleAndDesc(String query) {
+        List<ArticlesArchiveDoc> articles = esRepository.searchArticlesByTitleAndDesc(query);
+        return transformToModel(articles);
+    }
+
+    private List<ScrappedArticle> transformToModel(List<ArticlesArchiveDoc> articles) {
+        return articles.stream()
+                .map(doc -> new ScrappedArticle(
+                        doc.getTitle(), doc.getDescription(), doc.getAuthorName(), doc.getPublishDate()))
+                .collect(Collectors.toList());
+    }
 }

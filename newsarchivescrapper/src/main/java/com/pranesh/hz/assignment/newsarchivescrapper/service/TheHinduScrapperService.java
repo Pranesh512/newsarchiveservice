@@ -15,9 +15,8 @@ import org.springframework.util.StringUtils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.function.Consumer;
 
 @Service
 public class TheHinduScrapperService implements INewsArchiveScrapperService {
@@ -25,18 +24,18 @@ public class TheHinduScrapperService implements INewsArchiveScrapperService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TheHinduScrapperService.class);
 
     private static final String archiveLink = "https://www.thehindu.com/archive/";
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssXXX");
 
     @Override
-    public List<ScrappedArticle> doScrap() {
+    public void doScrap(Consumer<ScrappedArticle> consumer) {
         Document document = fetchHtmlDocument(archiveLink);
         if (document == null) {
-            return null;
+            return;
         }
-        List<ScrappedArticle> scrappedArticles = new ArrayList<>();
         Element archiveWebContainer = document.getElementById("archiveWebContainer");
         Elements monthLinksElements = archiveWebContainer.getElementsByTag("a");
-        monthLinksElements.subList(0, 3).forEach(element -> {
+        monthLinksElements.forEach(element -> {
             System.out.println("Month list");
             String monthLink = element.attr("href");
             Document monthArchivesDoc = fetchHtmlDocument(monthLink);
@@ -45,23 +44,19 @@ public class TheHinduScrapperService implements INewsArchiveScrapperService {
             }
             Elements dateLinksElements = monthArchivesDoc.getElementsByClass("archiveTable").first()
                     .getElementsByTag("tbody").first().getElementsByTag("a");
-            dateLinksElements.subList(0, 1).forEach(dateLinkElement -> {
+            dateLinksElements.forEach(dateLinkElement -> {
                 System.out.println("Date list");
                 String dateLink = dateLinkElement.attr("href");
                 if (!StringUtils.isEmpty(dateLink)) {
-                    List<ScrappedArticle> dateArticles = scrapArticles(dateLink);
-                    if (dateArticles != null) {
-                        scrappedArticles.addAll(dateArticles);
-                    }
+                    scrapArticles(dateLink, consumer);
                 }
             });
         });
-        return scrappedArticles;
     }
 
     @Override
-    public List<ScrappedArticle> doScrap(Date from, Date to) {
-        return null;
+    public void doScrap(Date from, Date to, Consumer<ScrappedArticle> consumer) {
+
     }
 
 
@@ -76,13 +71,12 @@ public class TheHinduScrapperService implements INewsArchiveScrapperService {
     }
 
     @Nullable
-    private List<ScrappedArticle> scrapArticles(String dateArchiveLink) {
+    private void scrapArticles(String dateArchiveLink, Consumer<ScrappedArticle> consumer) {
         Document dateArchiveDoc = fetchHtmlDocument(dateArchiveLink);
         if (dateArchiveDoc == null) {
-            return null;
+            return;
         }
-        List<ScrappedArticle> scrappedArticles = new ArrayList<>();
-        dateArchiveDoc.getElementsByClass("archive-list").subList(0, 2).forEach(sectionElement -> {
+        dateArchiveDoc.getElementsByClass("archive-list").forEach(sectionElement -> {
             sectionElement.getElementsByTag("a").forEach(articleLinkElement -> {
                 String articleLink = articleLinkElement.attr("href");
                 Document articleDoc = fetchHtmlDocument(articleLink);
@@ -120,10 +114,9 @@ public class TheHinduScrapperService implements INewsArchiveScrapperService {
                     }
                 }
                 ScrappedArticle article = new ScrappedArticle(title, description, authorName, publishDate);
-                scrappedArticles.add(article);
+                consumer.accept(article);
                 LOGGER.info("Scrapped title=[" + title + "]");
             });
         });
-        return scrappedArticles;
     }
 }
