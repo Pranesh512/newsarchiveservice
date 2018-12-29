@@ -1,7 +1,6 @@
 package com.pranesh.hz.assignment.newsarchivescrapper;
 
 import com.pranesh.hz.assignment.newsarchivescrapper.service.ArticleArchiveService;
-import org.elasticsearch.action.get.GetRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +26,14 @@ public class ArchiveScrappingRunner implements ApplicationRunner {
         boolean connected = false;
         while (!connected) {
             try {
-                esTemplate.getClient().get(new GetRequest("_doc"));
+                esTemplate.getClient().admin().cluster().prepareHealth().setWaitForYellowStatus().get();
                 connected = true;
             } catch (Exception e) {
                 LOGGER.info("Waiting for elasticsearch to start");
                 Thread.sleep(10000);
             }
         }
+        LOGGER.info("elasticsearch connected");
         archiveService.runScrapping();
     }
 }
