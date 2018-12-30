@@ -15,7 +15,7 @@ $ sh buildnrun.sh
 
 #### ToDos
 
-Separate the single Spring Boot application into three modules *Scrapper application*, *Search application* and *Core library*. Where Scrapper and Search applications depends on Core library.
+Split the single Spring Boot application into three modules *Scrapper application*, *Search application* and *Core library*. Where Scrapper and Search applications depends on Core library.
 
 
 
