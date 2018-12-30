@@ -16,5 +16,5 @@ $ sh buildnrun.sh
 #### ToDos
 
 - Split the single Spring Boot application into three modules *Scrapper application*, *Search application* and *Core library*. Where Scrapper and Search applications depends on Core library.
-- The *Scrapper application* can be schedule to invoke on daily basis to scrap the previous day's archived articles.
+- The *Scrapper application* can be scheduled to invoke on daily basis to scrap the previous day's archived articles.
 
