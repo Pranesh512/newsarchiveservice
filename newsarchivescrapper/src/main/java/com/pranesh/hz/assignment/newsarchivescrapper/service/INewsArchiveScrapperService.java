@@ -3,11 +3,11 @@ package com.pranesh.hz.assignment.newsarchivescrapper.service;
 import com.pranesh.hz.assignment.newsarchivescrapper.model.ScrappedArticle;
 
 import java.util.Date;
-import java.util.List;
+import java.util.function.Consumer;
 
 public interface INewsArchiveScrapperService {
 
-    List<ScrappedArticle> doScrap();
+    void doScrap(Consumer<ScrappedArticle> consumer);
 
-    List<ScrappedArticle> doScrap(Date from, Date to);
+    void doScrap(Date from, Date to, Consumer<ScrappedArticle> consumer);
 }
