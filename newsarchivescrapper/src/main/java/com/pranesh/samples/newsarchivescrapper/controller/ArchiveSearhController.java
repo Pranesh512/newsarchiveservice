@@ -1,8 +1,8 @@
-package com.pranesh.hz.assignment.newsarchivescrapper.controller;
+package com.pranesh.samples.newsarchivescrapper.controller;
 
-import com.pranesh.hz.assignment.newsarchivescrapper.model.ScrappedArticle;
-import com.pranesh.hz.assignment.newsarchivescrapper.model.SearchResponse;
-import com.pranesh.hz.assignment.newsarchivescrapper.service.ArticleArchiveService;
+import com.pranesh.samples.newsarchivescrapper.model.ScrappedArticle;
+import com.pranesh.samples.newsarchivescrapper.model.SearchResponse;
+import com.pranesh.samples.newsarchivescrapper.service.ArticleArchiveService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,4 +1,4 @@
-package com.pranesh.hz.assignment.newsarchivescrapper.entity;
+package com.pranesh.samples.newsarchivescrapper.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

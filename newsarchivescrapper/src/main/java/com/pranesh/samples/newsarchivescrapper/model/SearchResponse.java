@@ -1,4 +1,4 @@
-package com.pranesh.hz.assignment.newsarchivescrapper.model;
+package com.pranesh.samples.newsarchivescrapper.model;
 
 
 import lombok.Getter;

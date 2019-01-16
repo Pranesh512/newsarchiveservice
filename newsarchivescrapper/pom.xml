@@ -8,7 +8,7 @@
         <version>2.1.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.pranesh.hz.assignment</groupId>
+    <groupId>com.pranesh.samples</groupId>
     <artifactId>newsarchivescrapper</artifactId>
     <version>1.1</version>
     <name>newsarchivescrapper</name>

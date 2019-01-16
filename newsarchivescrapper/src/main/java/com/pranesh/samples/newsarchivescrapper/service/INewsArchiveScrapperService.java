@@ -1,6 +1,6 @@
-package com.pranesh.hz.assignment.newsarchivescrapper.service;
+package com.pranesh.samples.newsarchivescrapper.service;
 
-import com.pranesh.hz.assignment.newsarchivescrapper.model.ScrappedArticle;
+import com.pranesh.samples.newsarchivescrapper.model.ScrappedArticle;
 
 import java.util.Date;
 import java.util.function.Consumer;

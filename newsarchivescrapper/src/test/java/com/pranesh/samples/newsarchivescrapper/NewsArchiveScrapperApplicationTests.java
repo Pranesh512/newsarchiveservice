@@ -1,4 +1,4 @@
-package com.pranesh.hz.assignment.newsarchivescrapper;
+package com.pranesh.samples.newsarchivescrapper;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

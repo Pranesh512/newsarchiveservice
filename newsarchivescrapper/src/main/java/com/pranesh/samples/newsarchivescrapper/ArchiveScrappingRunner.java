@@ -1,6 +1,6 @@
-package com.pranesh.hz.assignment.newsarchivescrapper;
+package com.pranesh.samples.newsarchivescrapper;
 
-import com.pranesh.hz.assignment.newsarchivescrapper.service.ArticleArchiveService;
+import com.pranesh.samples.newsarchivescrapper.service.ArticleArchiveService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

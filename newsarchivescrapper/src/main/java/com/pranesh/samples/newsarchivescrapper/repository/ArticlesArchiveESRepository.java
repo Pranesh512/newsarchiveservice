@@ -1,6 +1,6 @@
-package com.pranesh.hz.assignment.newsarchivescrapper.repository;
+package com.pranesh.samples.newsarchivescrapper.repository;
 
-import com.pranesh.hz.assignment.newsarchivescrapper.entity.ArticlesArchiveDoc;
+import com.pranesh.samples.newsarchivescrapper.entity.ArticlesArchiveDoc;
 import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
